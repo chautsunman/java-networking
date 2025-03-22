@@ -10,10 +10,16 @@ import java.io.PrintWriter;
 public class BasicCommunicator implements Communicator {
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicCommunicator.class);
 
+    private final String name;
+
     private Thread listenMsgThread;
     private volatile boolean listenMsgRunning = false;
 
     private Thread basicCommunicatorThread;
+
+    public BasicCommunicator(String name) {
+        this.name = name;
+    }
 
     @Override
     public void process(BufferedReader input, PrintWriter output) {
@@ -22,6 +28,7 @@ public class BasicCommunicator implements Communicator {
                 try {
                     final String message = input.readLine();
                     if (message == null) {
+                        LOGGER.info("stream ended");
                         break;
                     }
                     LOGGER.info("received: {}", message);
@@ -31,7 +38,7 @@ public class BasicCommunicator implements Communicator {
             }
 
             LOGGER.info("stopped listening");
-        });
+        }, name + "-listen");
 
         basicCommunicatorThread = new Thread(() -> {
             output.println("hello");
@@ -58,7 +65,7 @@ public class BasicCommunicator implements Communicator {
 
             output.println("end");
             LOGGER.info("sent end");
-        });
+        }, name + "-communicator");
 
         listenMsgRunning = true;
         listenMsgThread.start();

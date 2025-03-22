@@ -10,8 +10,14 @@ import java.io.PrintWriter;
 public class EchoCommunicator implements Communicator {
     private static final Logger LOGGER = LoggerFactory.getLogger(EchoCommunicator.class);
 
+    private final String name;
+
     private Thread processThread;
     private volatile boolean running = false;
+
+    public EchoCommunicator(String name) {
+        this.name = name;
+    }
 
     @Override
     public void process(BufferedReader input, PrintWriter output) {
@@ -35,7 +41,7 @@ public class EchoCommunicator implements Communicator {
             }
 
             LOGGER.info("stopped communication");
-        });
+        }, name);
 
         running = true;
         processThread.start();

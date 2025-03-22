@@ -6,7 +6,7 @@ import org.example.tcp.TCPServer;
 
 public class TCPServerDemo {
     public static void main(String[] args) throws InterruptedException {
-        final Communicator communicator = new EchoCommunicator();
+        final Communicator communicator = new EchoCommunicator("echoCommunicator");
         final TCPServer tcpServer = new TCPServer(12345, communicator);
         tcpServer.start();
         Thread.sleep(10000);
