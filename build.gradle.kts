@@ -24,4 +24,5 @@ tasks.compileJava {
 
 tasks.test {
     useJUnitPlatform()
+    jvmArgs("--add-exports", "java.base/sun.nio.ch=ALL-UNNAMED")
 }
