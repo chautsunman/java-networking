@@ -14,6 +14,7 @@ public class SharedMemoryRingBuffer {
     // 64-byte header
     private static final int HEADER_SIZE_BYTES = 64;
 
+    private final int sizeBytes;
     private final int dataStartIdx;
     private final int dataSize;
     private final MappedByteBuffer sharedMemory;
@@ -24,8 +25,9 @@ public class SharedMemoryRingBuffer {
             throw new IllegalArgumentException("sizeBytes must be a multiple of " + Character.BYTES);
         }
 
+        this.sizeBytes = sizeBytes;
         this.dataStartIdx = HEADER_SIZE_BYTES;
-        this.dataSize = sizeBytes - HEADER_SIZE_BYTES;
+        this.dataSize = sizeBytes - HEADER_SIZE_BYTES - Character.BYTES;
         sharedMemory = SharedMemoryUtils.createSharedMemory(filePath, "rw", sizeBytes);
         if (sharedMemory == null) {
             throw new RuntimeException("cannot create shared memory");
@@ -98,12 +100,13 @@ public class SharedMemoryRingBuffer {
     }
 
     private boolean isFull() {
+        // cannot fill the last character to differentiate between empty and full
         return getNextIdx(getWriteIdx()) == getReadIdx();
     }
 
     private int getNextIdx(int idx) {
         int nextIdx = idx + Character.BYTES;
-        if (nextIdx >= dataSize) {
+        if (nextIdx >= sizeBytes) {
             nextIdx = dataStartIdx;
         }
         return nextIdx;
