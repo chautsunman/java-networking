@@ -17,6 +17,11 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
+tasks.compileJava {
+    options.compilerArgs.add("--add-exports")
+    options.compilerArgs.add("java.base/sun.nio.ch=ALL-UNNAMED")
+}
+
 tasks.test {
     useJUnitPlatform()
 }
